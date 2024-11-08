@@ -1,0 +1,19 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+header, footer {
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}

@@ -1,0 +1,94 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header>
+        <a href="{% url 'logout' %}">Logout {{ user }}</a>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        popo4ka...
+    </footer>
+
+    <script>
+        // Добавление задачи через AJAX
+        $('#task-form').submit(function(event) {
+            event.preventDefault();  // Останавливаем стандартное поведение формы
+
+            $.ajax({
+                url: '{% url "add_task" %}',
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.status === 'success') {
+                        // Удаляем сообщение "no tasks", если оно существует
+                        $('#no-tasks').remove();
+
+                        // Создаем HTML для новой задачи
+                        const task = response.task;
+                        let formattedDate = "";
+                        if (task.due_date != ""){
+                            const taskDueDate = new Date(task.due_date);
+                            formattedDate = taskDueDate.toLocaleDateString('ru-RU', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            });
+                        }
+                        console.log(formattedDate);
+                        const newTaskHtml = `
+                            <div id="task-${task.id}" class="task">
+                                <h2>${task.title}</h2>
+                                <p>${formattedDate}</p>
+                                <p>${task.description}</p>
+                                <button onclick="deleteTask(${task.id})">Удалить</button>
+                                <hr>
+                            </div>`;
+
+                        // Добавляем новую задачу в список
+                        $('#task-list').append(newTaskHtml);
+                        $('#task-form')[0].reset();  // Очищаем форму
+                    } else {
+                        alert('Ошибка при добавлении задачи.');
+                    }
+                },
+                error: function(response) {
+                    alert('Ошибка при добавлении задачи. Проверьте форму на наличие ошибок.');
+                }
+            });
+        });
+
+        function deleteTask(taskId) {
+            $.ajax({
+                url: `/delete_task/${taskId}/`,
+                type: 'POST',
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                success: function(response) {
+                    if (response.status === 'success') {
+                        $(`#task-${taskId}`).remove();  // Удаляем задачу из DOM
+
+                        // Проверяем, остались ли задачи. Если нет, добавляем сообщение "no tasks".
+                        if ($('#task-list').children().length === 0) {
+                            $('#task-list').append('<h2 id="no-tasks">no tasks</h2>');
+                        }
+                    } else {
+                        alert('Ошибка при удалении задачи.');
+                    }
+                },
+                error: function() {
+                    alert('Ошибка при удалении задачи.');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
