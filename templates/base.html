@@ -18,7 +18,6 @@
     </footer>
 
     <script>
-        // Добавление задачи через AJAX
         $('#task-form').submit(function(event) {
             event.preventDefault();  // Останавливаем стандартное поведение формы
 
@@ -34,7 +33,7 @@
                         // Создаем HTML для новой задачи
                         const task = response.task;
                         let formattedDate = "";
-                        if (task.due_date != ""){
+                        if (task.due_date !== "") {
                             const taskDueDate = new Date(task.due_date);
                             formattedDate = taskDueDate.toLocaleDateString('ru-RU', {
                                 day: '2-digit',
@@ -44,7 +43,6 @@
                                 minute: '2-digit'
                             });
                         }
-                        console.log(formattedDate);
                         const newTaskHtml = `
                             <div id="task-${task.id}" class="task">
                                 <h2>${task.title}</h2>
@@ -54,9 +52,33 @@
                                 <hr>
                             </div>`;
 
-                        // Добавляем новую задачу в список
-                        $('#task-list').append(newTaskHtml);
-                        $('#task-form')[0].reset();  // Очищаем форму
+                        // Находим позицию для вставки новой задачи
+                        let inserted = false;
+                        $('#task-list .task').each(function() {
+                            const existingDueDate = $(this).find('p').first().text();
+                            const existingTaskDueDate = existingDueDate ? parseDate(existingDueDate) : null;
+                            const newTaskDueDate = task.due_date ? new Date(task.due_date) : null;
+                            
+                            console.log(existingDueDate, newTaskDueDate);
+
+                            // Условие для вставки задачи в нужное место
+                            if (
+                                (newTaskDueDate && (!existingTaskDueDate || newTaskDueDate < existingTaskDueDate)) ||
+                                (!newTaskDueDate && !existingTaskDueDate && new Date(task.created_at) < new Date($(this).data('created-at')))
+                            ) {
+                                $(this).before(newTaskHtml);
+                                inserted = true;
+                                return false;  // Выходим из each
+                            }
+                        });
+
+                        // Если новая задача не была вставлена, добавляем ее в конец
+                        if (!inserted) {
+                            $('#task-list').append(newTaskHtml);
+                        }
+
+                        // Очищаем форму
+                        $('#task-form')[0].reset();
                     } else {
                         alert('Ошибка при добавлении задачи.');
                     }
@@ -66,6 +88,20 @@
                 }
             });
         });
+
+        function parseDate(formattedDate) {
+            // Разбиваем строку даты и времени по запятой
+            const [datePart, timePart] = formattedDate.split(', ');
+
+            // Разбиваем дату на день, месяц и год
+            const [day, month, year] = datePart.split('.').map(part => parseInt(part, 10));
+
+            // Разбиваем время на часы и минуты
+            const [hours, minutes] = timePart.split(':').map(part => parseInt(part, 10));
+
+            // Создаем объект Date
+            return new Date(year, month - 1, day, hours, minutes);
+        }
 
         function deleteTask(taskId) {
             $.ajax({
