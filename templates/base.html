@@ -16,7 +16,7 @@
     <footer>
         popo4ka...
     </footer>
-
+    
     <script>
         $('#task-form').submit(function(event) {
             event.preventDefault();  // Останавливаем стандартное поведение формы
@@ -26,6 +26,7 @@
                 type: 'POST',
                 data: $(this).serialize(),
                 success: function(response) {
+                    console.log(response); // Логируем ответ от сервера для проверки
                     if (response.status === 'success') {
                         // Удаляем сообщение "no tasks", если оно существует
                         $('#no-tasks').remove();
@@ -33,7 +34,7 @@
                         // Создаем HTML для новой задачи
                         const task = response.task;
                         let formattedDate = "";
-                        if (task.due_date !== "") {
+                        if (task.due_date) {
                             const taskDueDate = new Date(task.due_date);
                             formattedDate = taskDueDate.toLocaleDateString('ru-RU', {
                                 day: '2-digit',
@@ -43,36 +44,35 @@
                                 minute: '2-digit'
                             });
                         }
-                        const newTaskHtml = `
-                            <div id="task-${task.id}" class="task">
-                                <h2>${task.title}</h2>
-                                <p>${formattedDate}</p>
-                                <p>${task.description}</p>
-                                <button onclick="deleteTask(${task.id})">Удалить</button>
-                                <hr>
+                        const newTaskHtml = `<div id="task-${task.id}" class="task">
+                                <div class="taskContent">
+                                    <p class="taskTitle">${task.title}</p>
+                                    <p class="taskDueDate">${formattedDate}</p>
+                                    <p class="taskDescription">${task.description}</p>
+                                </div>
+                                <div class="taskButton">
+                                    <button class="deleteButton" onclick="deleteTask(${task.id})">D</button>
+                                </div>
                             </div>`;
 
-                        // Находим позицию для вставки новой задачи
+                        // Вставляем задачу в нужное место
                         let inserted = false;
                         $('#task-list .task').each(function() {
-                            const existingDueDate = $(this).find('p').first().text();
+                            const existingDueDate = $(this).find('.taskDueDate').text().trim();
                             const existingTaskDueDate = existingDueDate ? parseDate(existingDueDate) : null;
                             const newTaskDueDate = task.due_date ? new Date(task.due_date) : null;
                             
-                            console.log(existingDueDate, newTaskDueDate);
-
-                            // Условие для вставки задачи в нужное место
                             if (
                                 (newTaskDueDate && (!existingTaskDueDate || newTaskDueDate < existingTaskDueDate)) ||
                                 (!newTaskDueDate && !existingTaskDueDate && new Date(task.created_at) < new Date($(this).data('created-at')))
                             ) {
                                 $(this).before(newTaskHtml);
                                 inserted = true;
-                                return false;  // Выходим из each
+                                return false;  // Выход из each
                             }
                         });
 
-                        // Если новая задача не была вставлена, добавляем ее в конец
+                        // Если задача не была вставлена, добавляем её в конец
                         if (!inserted) {
                             $('#task-list').append(newTaskHtml);
                         }
@@ -88,6 +88,7 @@
                 }
             });
         });
+
 
         function parseDate(formattedDate) {
             // Разбиваем строку даты и времени по запятой

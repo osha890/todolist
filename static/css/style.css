@@ -4,16 +4,120 @@
 }
 
 body {
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
+    font-family: 'Calibri';
 }
 
 main {
     flex: 1;
+    margin: 0 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 header, footer {
     padding: 20px;
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+#task-list, .formContainer {
+    width: 100%;
+}
+
+.formContainer {
+    margin-top: 20px;
+}
+
+.task, #task-form {
+    border-radius: 5px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    padding: 10px;
+    display: flex;
+    gap: 15px;
+}
+
+.taskContent, .taskButton {
+}
+
+.taskContent, .formContent {
+    flex: 1;
+}
+
+.taskButton, .formButton {
+    margin: auto;
+}
+
+.deleteButton {
+}
+
+.deleteButton, .formButton button {
+    background-color: #f44336;
+    color: white;
+    height: 40px;
+    width: 40px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.formButton button {
+    background-color: #4CAF50;
+}
+
+.deleteButton:hover {
+    background-color: #e53935;
+}
+
+.formButton button:hover {
+    background-color: #45a049;
+}
+
+.taskTitle {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.taskDescription {
+    color: #666;
+}
+
+.formContent {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Основной контейнер для содержимого формы */
+.formContent {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Стили для групп элементов формы */
+.form-group {
+}
+
+/* Стили для полей ввода */
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+textarea {
+    resize: none;
+    height: 100px;
+}
+
+/* Стили для вывода ошибок */
+.error {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
 }
