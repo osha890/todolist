@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -6,7 +8,7 @@ from django.views.decorators.http import require_POST
 import calendar
 
 from .models import Task
-from .forms import TaskForm
+from .forms import TaskForm, DayDateForm
 
 
 # Create your views here.
@@ -106,3 +108,29 @@ def calendar_view(request, year=None, month=None):
         context['today'] = today.day
 
     return render(request, 'tasks/calendar.html', context)
+
+
+@login_required
+def day_view(request, year=None, month=None, day=None):
+    tasks = []
+    selected_date = None
+    if day is not None:
+        selected_date = date(year, month, day)
+    if request.method == 'POST':
+        form = DayDateForm(request.POST)
+        if form.is_valid():
+            selected_date = form.cleaned_data['day_date']
+            tasks = Task.objects.filter(due_date__year=selected_date.year,
+                                        due_date__month=selected_date.month,
+                                        due_date__day=selected_date.day)
+    else:
+        form = DayDateForm()
+        if day is None:
+            today = timezone.now()
+            year = today.year
+            month = today.month
+            day = today.day
+            tasks = Task.objects.filter(due_date__year=year, due_date__month=month, due_date__day=day)
+        else:
+            tasks = Task.objects.filter(due_date__year=year, due_date__month=month, due_date__day=day)
+    return render(request, 'tasks/day.html', {'form': form, 'tasks': tasks, 'selected_date': selected_date})

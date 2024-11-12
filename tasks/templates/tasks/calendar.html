@@ -26,9 +26,9 @@
                 {% if day == 0 %}
                 <td></td>
                 {% else %}
-                <td class="{% if day in days_with_tasks %}highlight{% endif %} {% if day == today %}today{% endif %}">
-                    {{ day }}
-                </td>
+                    <td class="{% if day in days_with_tasks %}highlight{% endif %} {% if day == today %}today{% endif %}">
+                        <a class="dayHref" href="{% url 'day' year=year month=month day=day %}">{{ day }}</a>
+                    </td>
                 {% endif %}
                 {% endfor %}
             </tr>

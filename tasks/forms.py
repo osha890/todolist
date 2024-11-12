@@ -9,3 +9,11 @@ class TaskForm(forms.ModelForm):
         widgets = {
             'due_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
+
+
+class DayDateForm(forms.Form):
+    day_date = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        label='',
+        required=False
+    )
