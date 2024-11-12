@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="calendar-navigation">
+    <a href="{% url 'calendar' prev_year prev_month %}">« Prev month</a>
+    <span>{{ month }}/{{ year }}</span>
+    <a href="{% url 'calendar' next_year next_month %}">Next month »</a>
+</div>
+<div id="calendar-content">
+    <table>
+        <thead>
+            <tr>
+                <th>Mon</th>
+                <th>Tue</th>
+                <th>Wed</th>
+                <th>Thu</th>
+                <th>Fri</th>
+                <th>Sat</th>
+                <th>Sun</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for week in calendar %}
+            <tr>
+                {% for day in week %}
+                {% if day == 0 %}
+                <td></td>
+                {% else %}
+                <td class="{% if day in days_with_tasks %}highlight{% endif %} {% if day == today %}today{% endif %}">
+                    {{ day }}
+                </td>
+                {% endif %}
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

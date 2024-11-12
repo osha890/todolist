@@ -32,8 +32,8 @@
             <div id="task-{{ task.id }}" class="task">
                 <div class="taskContent">
                     <p class="taskTitle">{{ task.title }}<p>
-                    <p class="taskDueDate">{{ task.due_date|date:"d.m.Y, H:i" }}</p>
-                    <p class="taskDescription">{{ task.description }}</p>
+                    {% if task.due_date %}<p class="taskDueDate">{{ task.due_date|date:"d.m.Y, H:i" }}</p>{% endif %}
+                    {% if task.description %}<p class="taskDescription">{{ task.description }}</p>{% endif %}
                 </div>
                 <div class="taskButton">
                     <button class="deleteButton" onclick="deleteTask({{ task.id }})">D</button>
