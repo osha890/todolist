@@ -8,17 +8,20 @@
 </head>
 <body>
     <header>
-        <a href="{% url 'day' %}">Day</a>
-        <a href="{% url 'home' %}">All tasks</a>
-        <a href="{% url 'calendar' %}">Calendar</a>
-        <a href="{% url 'logout' %}">Logout {{ user }}</a>
+        <div class="left">{{ user }}</div>
+        <div class="center">
+            <a href="{% url 'day' %}">Day</a>
+            <a href="{% url 'home' %}">All tasks</a>
+            <a href="{% url 'calendar' %}">Calendar</a>
+        </div>
+        <div class="right">
+            <a href="{% url 'home' %}">Add task</a>
+            <a class="logout" href="{% url 'logout' %}">Logout</a>
+        </div>
     </header>
     <main>
         {% block content %}{% endblock %}
     </main>
-    <footer>
-        popo4ka...
-    </footer>
     
     <script>
         $('#task-form').submit(function(event) {

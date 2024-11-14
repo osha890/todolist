@@ -24,9 +24,34 @@ header, footer {
 }
 
 header {
+    position: relative;
+    height: 20px; /* Задайте нужную высоту родительскому блоку */
+}
+
+header div {
     display: flex;
-    justify-content: center;
-    gap: 20px;
+    gap: 15px;
+}
+
+header .center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+header .right {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+} 
+
+header .left {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 #task-list, .formContainer {
@@ -277,6 +302,32 @@ tr td:nth-child(7) {
     font-size: 16px;
 }
 
-.dayForm button:hover {
+.dayForm button:hover, header a:hover {
     background-color: #45a049;
+}
+
+header a {
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px; 
+    height: 30px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+header .logout {
+    background-color: white;
+    box-sizing: border-box;
+    border: 2px solid #4CAF50;
+    color: black;
+}
+
+header .logout:hover {
+    background-color: #f2f2f2;
 }

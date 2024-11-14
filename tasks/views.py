@@ -113,9 +113,7 @@ def calendar_view(request, year=None, month=None):
 @login_required
 def day_view(request, year=None, month=None, day=None):
     tasks = []
-    selected_date = None
-    if day is not None:
-        selected_date = date(year, month, day)
+    selected_date = date.today()
     if request.method == 'POST':
         form = DayDateForm(request.POST)
         if form.is_valid():
@@ -124,7 +122,6 @@ def day_view(request, year=None, month=None, day=None):
                                         due_date__month=selected_date.month,
                                         due_date__day=selected_date.day)
     else:
-        form = DayDateForm()
         if day is None:
             today = timezone.now()
             year = today.year
@@ -133,4 +130,5 @@ def day_view(request, year=None, month=None, day=None):
             tasks = Task.objects.filter(due_date__year=year, due_date__month=month, due_date__day=day)
         else:
             tasks = Task.objects.filter(due_date__year=year, due_date__month=month, due_date__day=day)
+        form = DayDateForm(initial={'day_date': date(year, month, day)})
     return render(request, 'tasks/day.html', {'form': form, 'tasks': tasks, 'selected_date': selected_date})
